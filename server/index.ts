@@ -7,3 +7,4 @@ app.use(async (ctx) => {
 });
 
 app.listen(4000);
+console.log('server running');
