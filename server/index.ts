@@ -22,7 +22,10 @@ app.use(router.routes()).use(router.allowedMethods());
 
 io.on('connect', (socket) => {
   console.log(`client connected: ${socket.id}`);
-  socket.on('change', changeHandler);
+
+  socket.on('change', (data) => {
+    changeHandler(socket, data);
+  });
 });
 
 server.listen(4000);
