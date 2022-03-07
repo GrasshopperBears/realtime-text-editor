@@ -18,7 +18,7 @@ interface SocketChangeData {
 const socket = io('http://localhost:4000');
 
 const EVENT_TYPE_DELETE = ['deleteContentBackward', 'deleteContentForward', 'deleteByCut'];
-const EVENT_TYPE_UPDATE = ['insertText', 'insertFromPaste', 'historyUndo', 'historyRedo'];
+const EVENT_TYPE_INSERT = ['insertText', 'insertFromPaste'];
 
 const App = () => {
   const [textareaText, setTextareaText] = useState('');
@@ -38,6 +38,12 @@ const App = () => {
       setTextareaText(
         textareaText.slice(0, newTextPosition) + textareaText.slice(newTextPosition + length),
       );
+    } else if (type === ChangeDataType.INSERT) {
+      setTextareaText(
+        textareaText.slice(0, newTextPosition) +
+          text +
+          textareaText.slice(newTextPosition + length),
+      );
     }
   };
 
@@ -46,13 +52,24 @@ const App = () => {
     position: number,
     newText: string,
   ): SocketChangeData | null => {
-    if (EVENT_TYPE_DELETE.includes(eventType))
+    if (EVENT_TYPE_DELETE.includes(eventType)) {
       return {
         source: socket.id,
         type: ChangeDataType.DELETE,
         position,
         length: textareaText.length - newText.length,
       };
+    } else if (EVENT_TYPE_INSERT.includes(eventType)) {
+      const length = newText.length - textareaText.length;
+      const insertPosition = position - length;
+      return {
+        source: socket.id,
+        type: ChangeDataType.INSERT,
+        position: insertPosition,
+        length,
+        text: newText.slice(insertPosition, insertPosition + length),
+      };
+    }
 
     return null;
   };
