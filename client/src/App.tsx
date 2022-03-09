@@ -40,9 +40,7 @@ const App = () => {
       );
     } else if (type === ChangeDataType.INSERT) {
       setTextareaText(
-        textareaText.slice(0, newTextPosition) +
-          text +
-          textareaText.slice(newTextPosition + length),
+        textareaText.slice(0, newTextPosition) + text + textareaText.slice(newTextPosition),
       );
     }
   };
